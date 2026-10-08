@@ -379,7 +379,13 @@
         subject: "Action Required: Update Microsoft Authenticator 2FA",
         senderName: "IT Helpdesk",
         senderEmail: "servicedesk@internal-portal-cloud.com",
-        body: `<p>We are upgrading all staff to FIDO2 authentication standards. Please scan the QR code below with your mobile camera to re-register your authenticator app:</p><div style="border: 2px dashed #999; width: 140px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 16px 0; background: #eee;"><strong>[QR CODE]</strong></div><p><small>Link behind QR: https://auth-mfa-sync.cc/enroll</small></p>`,
+        body: `<p>We are upgrading all staff to FIDO2 authentication standards. Please scan the QR code below with your mobile camera to re-register your authenticator app:</p>
+<div style="margin: 16px 0;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges" style="width: 150px; height: 150px; background: #fff; padding: 6px; border: 1px solid #dadce0; border-radius: 4px;">
+    <path fill="#000" d="M0 0h7v7H0zm1 1v5h5V1zm1 1h3v3H2zm6-2h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zm1 0h1v2h-1zm2 0h1v1h-1zm1 0h1v1h-1zm2 0h1v1h-1zm1 0h1v1h-1zm2 0h7v7h-7zm1 1v5h5V1zm1 1h3v3h-3zm-14 6h1v1H8zm3 0h1v1h-1zm4 0h1v1h-1zm2 0h1v1h-1zm2 0h1v1h-1zm-10 1h2v1h-2zm4 0h2v1h-2zm3 0h1v1h-1zm2 0h1v2h-1zm-13 1h1v2H7zm2 0h2v1H9zm3 0h1v1h-1zm2 0h2v1h-2zm-6 1h2v1H8zm4 0h1v1h-1zm1 0h1v1h-1zm-5 1h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zm2 0h2v1h-2zm2 0h1v1h-1zm-8 1h1v2H8zm2 0h1v1h-1zm2 0h1v1h-1zm4 0h1v1h-1zm-7 1h1v1H9zm3 0h1v1h-1zm3 0h1v1h-1zm-8 1h1v1H7zm4 0h1v1h-1zm2 0h1v1h-1zm-6 1h1v2H7zm4 0h2v1h-2zm-4 1h1v1H7zm3 0h1v2h-1zm2 0h2v1h-2zm-5 1h7v7H0zm1 1v5h5v-5zm1 1h3v3H2zm6-2h1v1H8zm3 0h2v1h-2zm3 0h1v1h-1zm2 0h1v1h-1zm2 0h1v2h-1zm2 0h1v1h-1zm-8 1h2v1h-2zm4 0h1v1h-1zm3 0h1v1h-1zm-9 1h1v1H7zm3 0h1v1h-1zm3 0h1v1h-1zm3 0h1v1h-1zm-8 1h2v1H8zm4 0h1v1h-1zm2 0h1v1h-1zm1 0h1v1h-1zm2 0h1v1h-1zm-9 1h1v1H7zm2 0h1v1h-1zm2 0h1v1h-1zm2 0h1v1h-1zm2 0h1v1h-1zm1 0h1v1h-1zm2 0h1v1h-1zm-11 1h2v1H7zm3 0h1v1h-1zm4 0h2v1h-2z"/>
+  </svg>
+</div>
+<p><small>Link behind QR: https://auth-mfa-sync.cc/enroll</small></p>`,
         isPhishing: true,
         explanation: "<strong>Quishing (QR Code Phishing):</strong> Attackers use QR codes in emails so security scanners cannot easily inspect the URL and to force targets onto mobile devices."
       },
