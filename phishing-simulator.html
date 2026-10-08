@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -60,7 +61,7 @@
       background: var(--surface);
       border-radius: 8px;
       border: 1px solid var(--border);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
       overflow: hidden;
     }
 
@@ -238,6 +239,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <header>
@@ -255,7 +257,8 @@
         <div class="email-header">
           <div id="email-subject" class="email-subject">Loading subject...</div>
           <div class="email-meta">
-            <div><strong>From:</strong> <span id="email-sender" class="sender-highlight"></span> &lt;<span id="email-sender-addr"></span>&gt;</div>
+            <div><strong>From:</strong> <span id="email-sender" class="sender-highlight"></span> &lt;<span
+                id="email-sender-addr"></span>&gt;</div>
             <div><strong>To:</strong> you@company.com</div>
           </div>
         </div>
@@ -296,7 +299,7 @@
         subject: "Action Required: Password Reset Request",
         senderName: "IT Support Team",
         senderEmail: "support@my-company-security.com",
-        body: `<p>Hello,</p><br><p>We received an urgent request to reset your system password. If you didn't initiate this request, click below to secure your credentials immediately:</p><a class="btn-action-link" href="#" data-hover-url="http://security-support-login.com.phish-site.ru/auth">Change Password</a><br><p>Thanks,<br>Corporate IT Support</p>`,
+        body: `<p>Hello,</p><br><p>We received an urgent request to reset your system password. If you didn't initiate this request, click below to secure your credentials immediately:</p><a class="btn-action-link" href="http://security-support-login.com.phish-site.ru/auth">Change Password</a><br><p>Thanks,<br>Corporate IT Support</p>`,
         isPhishing: true,
         explanation: "Check the sender domain and hover over the button. The email comes from a look-alike domain (<code>my-company-security.com</code>), and the button redirects to an external malicious server."
       },
@@ -304,7 +307,7 @@
         subject: "Shared Document: Q3 Financial Overview.pdf",
         senderName: "Google Docs",
         senderEmail: "comments-noreply@docs.google.com",
-        body: `<p><strong>Sarah Davis</strong> tagged you in a comment on <strong>Q3 Financial Overview.pdf</strong>:</p><br><blockquote style="border-left: 3px solid #dadce0; padding-left: 12px; margin-bottom: 12px; font-style: italic;">"Please review the updated revenue breakdown before tomorrow's meeting."</blockquote><a class="btn-action-link" href="#" data-hover-url="https://docs.google.com/document/d/1Xy8z.../edit">Open in Docs</a>`,
+        body: `<p><strong>Sarah Davis</strong> tagged you in a comment on <strong>Q3 Financial Overview.pdf</strong>:</p><br><blockquote style="border-left: 3px solid #dadce0; padding-left: 12px; margin-bottom: 12px; font-style: italic;">"Please review the updated revenue breakdown before tomorrow's meeting."</blockquote><a class="btn-action-link" href="https://docs.google.com/document/d/1Xy8z.../edit">Open in Docs</a>`,
         isPhishing: false,
         explanation: "This is legitimate. The sender domain is verified as <code>docs.google.com</code>, and hovering over the call-to-action link reveals an authentic Google Drive URL."
       },
@@ -320,7 +323,7 @@
         subject: "Dropbox: Storage Limit Reached",
         senderName: "Dropbox Notifications",
         senderEmail: "no-reply@dropboxmail.com",
-        body: `<p>Hi there,</p><br><p>Your team workspace has reached 98% capacity. To avoid interruption in syncing, review your account settings below.</p><p style="margin-top: 16px;"><a href="#" data-hover-url="https://www.dropbox.com/buy/storage">Upgrade Storage Plan</a></p>`,
+        body: `<p>Hi there,</p><br><p>Your team workspace has reached 98% capacity. To avoid interruption in syncing, review your account settings below.</p><p style="margin-top: 16px;"><a href="https://www.dropbox.com/buy/storage">Upgrade Storage Plan</a></p>`,
         isPhishing: false,
         explanation: "Legitimate. <code>dropboxmail.com</code> is an official domain owned by Dropbox for automated notifications, and the link points to <code>dropbox.com</code>."
       },
@@ -328,7 +331,7 @@
         subject: "Security Alert: Unusual sign-in activity",
         senderName: "Apple Support",
         senderEmail: "security@apple-alerts.com",
-        body: `<p>Dear Customer,</p><br><p>Your Apple ID was used to sign in to iCloud from an unrecognized browser in Moscow, Russia.</p><p>If this was not you, please verify and protect your account immediately:</p><a class="btn-action-link" href="#" data-hover-url="https://www.xn--pple-43d.com/recovery">Secure My Account</a>`,
+        body: `<p>Dear Customer,</p><br><p>Your Apple ID was used to sign in to iCloud from an unrecognized browser in Moscow, Russia.</p><p>If this was not you, please verify and protect your account immediately:</p><a class="btn-action-link" href="https://www.xn--pple-43d.com/recovery">Secure My Account</a>`,
         isPhishing: true,
         explanation: "<strong>IDN Homograph Attack:</strong> The link uses Punycode (<code>xn--pple-43d.com</code>), which uses Cyrillic characters to imitate Latin letters."
       },
@@ -336,7 +339,7 @@
         subject: "Your GitHub authentication code",
         senderName: "GitHub",
         senderEmail: "noreply@github.com",
-        body: `<p>Hi there,</p><br><p>Here is your GitHub one-time verification code: <strong style="font-size: 1.2rem; letter-spacing: 2px;">849201</strong></p><p>This code expires in 10 minutes. If you did not request this, you can check your active sessions:</p><p><a href="#" data-hover-url="https://github.com/settings/sessions">View Active Sessions</a></p>`,
+        body: `<p>Hi there,</p><br><p>Here is your GitHub one-time verification code: <strong style="font-size: 1.2rem; letter-spacing: 2px;">849201</strong></p><p>This code expires in 10 minutes. If you did not request this, you can check your active sessions:</p><p><a href="https://github.com/settings/sessions">View Active Sessions</a></p>`,
         isPhishing: false,
         explanation: "<strong>Legitimate:</strong> The sender domain is authentic (<code>github.com</code>), and the hyperlink points directly to the genuine GitHub settings page."
       },
@@ -344,7 +347,7 @@
         subject: "HR Dept: Please authorize Employee Pulse Survey App",
         senderName: "Microsoft 365 HR Tool",
         senderEmail: "notifications@microsoft.com",
-        body: `<p>Your organization has invited you to connect the <strong>Employee Pulse 2026</strong> app to your Office 365 account.</p><p>Permissions requested: <em>Read your emails, access contacts, send mail on your behalf.</em></p><a class="btn-action-link" href="#" data-hover-url="https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=bad-actor-app-id&response_type=code&scope=Mail.ReadWrite%20Mail.Send">Accept & Authorize</a>`,
+        body: `<p>Your organization has invited you to connect the <strong>Employee Pulse 2026</strong> app to your Office 365 account.</p><p>Permissions requested: <em>Read your emails, access contacts, send mail on your behalf.</em></p><a class="btn-action-link" href="https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=bad-actor-app-id&response_type=code&scope=Mail.ReadWrite%20Mail.Send">Accept & Authorize</a>`,
         isPhishing: true,
         explanation: "<strong>OAuth Consent Phishing:</strong> While the link genuinely points to <code>login.microsoftonline.com</code>, an attacker is tricking you into granting an unverified third-party application access to your data."
       },
@@ -352,7 +355,7 @@
         subject: "Mandatory Q3 Compliance Training",
         senderName: "Corporate HR Compliance",
         senderEmail: "hr-compliance@connpany.com",
-        body: `<p>Team,</p><br><p>All employees are required to complete the Annual Compliance module before Friday to maintain active network access.</p><p><a href="#" data-hover-url="https://learning.connpany.com/login">Launch Compliance Portal</a></p>`,
+        body: `<p>Team,</p><br><p>All employees are required to complete the Annual Compliance module before Friday to maintain active network access.</p><p><a href="https://learning.connpany.com/login">Launch Compliance Portal</a></p>`,
         isPhishing: true,
         explanation: "<strong>Typosquatting:</strong> The domain is <code>connpany.com</code> (using two 'n's instead of 'm')."
       },
@@ -360,7 +363,7 @@
         subject: "You received a new document via DocuSign",
         senderName: "DocuSign System",
         senderEmail: "dse@docusign.net",
-        body: `<p>Please review and sign the attached <strong>NDA_Mutual_Agreement.pdf</strong>.</p><br><a class="btn-action-link" href="#" data-hover-url="https://www.google.com/url?q=http://malicious-phish-portal.com/login">Review Document</a>`,
+        body: `<p>Please review and sign the attached <strong>NDA_Mutual_Agreement.pdf</strong>.</p><br><a class="btn-action-link" href="https://www.google.com/url?q=http://malicious-phish-portal.com/login">Review Document</a>`,
         isPhishing: true,
         explanation: "<strong>Open Redirect Attack:</strong> The link abuses Google's redirector (<code>google.com/url?q=...</code>) to forward you to an external credential harvesting site."
       },
@@ -368,7 +371,7 @@
         subject: "Your W-2 Tax Form is ready for download",
         senderName: "ADP Notifications",
         senderEmail: "adp-ebill@adp.com",
-        body: `<p>Your end-of-year tax document is now available online.</p><br><p>Log in to your ADP portal to view or print your statement:</p><a class="btn-action-link" href="#" data-hover-url="https://online.adp.com/signin/v1/?APPID=W2">Access Tax Statement</a>`,
+        body: `<p>Your end-of-year tax document is now available online.</p><br><p>Log in to your ADP portal to view or print your statement:</p><a class="btn-action-link" href="https://online.adp.com/signin/v1/?APPID=W2">Access Tax Statement</a>`,
         isPhishing: false,
         explanation: "<strong>Legitimate:</strong> Third-party payroll alerts from ADP legitimately use <code>adp.com</code> subdomains, and the root domain is exact."
       },
@@ -384,7 +387,7 @@
         subject: "Webinar Invitation: Enterprise Cloud Security Architecture",
         senderName: "Cloudflare Events",
         senderEmail: "events@cloudflare.com",
-        body: `<p>Join us live this Thursday for an interactive deep-dive on Zero Trust architecture.</p><a class="btn-action-link" href="#" data-hover-url="https://click.cloudflare.com/track/click?id=a1b2c3d4e5">Register for Webinar</a>`,
+        body: `<p>Join us live this Thursday for an interactive deep-dive on Zero Trust architecture.</p><a class="btn-action-link" href="https://click.cloudflare.com/track/click?id=a1b2c3d4e5">Register for Webinar</a>`,
         isPhishing: false,
         explanation: "<strong>Legitimate Tracking Link:</strong> Companies frequently route legitimate email links through custom tracking subdomains (<code>click.cloudflare.com</code>)."
       },
@@ -392,7 +395,7 @@
         subject: "Amazon: Problem with your recent order payment",
         senderName: "Amazon Billing",
         senderEmail: "auto-confirm@amazon.com.customer-order-support.net",
-        body: `<p>We were unable to process the payment for order #112-9482910-48291.</p><p>Please update your billing details within 24 hours to prevent cancellation:</p><a class="btn-action-link" href="#" data-hover-url="https://amazon.com.customer-order-support.net/ap/signin">Update Payment Method</a>`,
+        body: `<p>We were unable to process the payment for order #112-9482910-48291.</p><p>Please update your billing details within 24 hours to prevent cancellation:</p><a class="btn-action-link" href="https://amazon.com.customer-order-support.net/ap/signin">Update Payment Method</a>`,
         isPhishing: true,
         explanation: "<strong>Subdomain Misdirection:</strong> <code>amazon.com</code> is just a subdomain prefix of <code>customer-order-support.net</code>. The real domain is always before the final slash/TLD."
       },
@@ -400,7 +403,7 @@
         subject: "Your Slack sign-in magic link",
         senderName: "Slack",
         senderEmail: "feedback@slack.com",
-        body: `<p>Click the button below to sign in to your Slack workspace. This link will expire in 10 minutes and can only be used once.</p><a class="btn-action-link" href="#" data-hover-url="https://app.slack.com/magic-login/1298492-49281-auth">Sign In to Slack</a>`,
+        body: `<p>Click the button below to sign in to your Slack workspace. This link will expire in 10 minutes and can only be used once.</p><a class="btn-action-link" href="https://app.slack.com/magic-login/1298492-49281-auth">Sign In to Slack</a>`,
         isPhishing: false,
         explanation: "<strong>Legitimate:</strong> Standard passwordless magic link going directly to <code>app.slack.com</code>."
       },
@@ -416,7 +419,7 @@
         subject: "Microsoft 365: Session Expired",
         senderName: "Microsoft Account Team",
         senderEmail: "no-reply@accountprotection.microsoft.com",
-        body: `<p>Your session timed out. Re-authenticate below to resume working with your team files:</p><a class="btn-action-link" href="#" data-hover-url="https://login.microsoftonline.com.auth-session-sync.biz/login">Keep Me Signed In</a>`,
+        body: `<p>Your session timed out. Re-authenticate below to resume working with your team files:</p><a class="btn-action-link" href="https://login.microsoftonline.com.auth-session-sync.biz/login">Keep Me Signed In</a>`,
         isPhishing: true,
         explanation: "<strong>Adversary-in-the-Middle (AitM):</strong> Attackers use reverse proxies to bypass MFA. Notice the deceptive domain <code>auth-session-sync.biz</code>."
       },
@@ -424,7 +427,7 @@
         subject: "Weekly Jira Digest: Assigned Tickets",
         senderName: "Jira Internal",
         senderEmail: "jira@corp.internal-tools.net",
-        body: `<p>Here are your open sprint items for this week:</p><ul><li>PROJ-412: Database migration scripts</li><li>PROJ-501: Refactor auth routes</li></ul><p><a href="#" data-hover-url="https://jira.corp.internal-tools.net/browse/PROJ-412">Open Ticket in Jira</a></p>`,
+        body: `<p>Here are your open sprint items for this week:</p><ul><li>PROJ-412: Database migration scripts</li><li>PROJ-501: Refactor auth routes</li></ul><p><a href="https://jira.corp.internal-tools.net/browse/PROJ-412">Open Ticket in Jira</a></p>`,
         isPhishing: false,
         explanation: "<strong>Legitimate Internal Notification:</strong> Points straight to a recognized enterprise subdomain without external hops."
       },
@@ -432,7 +435,7 @@
         subject: "IT Service Desk: Terminated Employee Account Offboarding",
         senderName: "Helpdesk Administration",
         senderEmail: "helpdesk@company-internal.net",
-        body: `<p>All managers must submit the termination equipment audit using the official form:</p><a class="btn-action-link" href="#" data-hover-url="https://forms.gle/49Vb8Z9pKL2">Complete Offboarding Audit</a>`,
+        body: `<p>All managers must submit the termination equipment audit using the official form:</p><a class="btn-action-link" href="https://forms.gle/49Vb8Z9pKL2">Complete Offboarding Audit</a>`,
         isPhishing: true,
         explanation: "<strong>Free Cloud Service Abuse:</strong> Phishers frequently host credential collection forms on legitimate free platforms like Google Forms to bypass reputation filters."
       },
@@ -448,7 +451,7 @@
         subject: "Meeting Invitation: Engineering Sync",
         senderName: "Alex Rivera",
         senderEmail: "no-reply@zoom.us",
-        body: `<p>Alex Rivera is inviting you to a scheduled Zoom meeting.</p><br><p>Topic: Architecture Review<br>Time: 2:00 PM EST</p><a class="btn-action-link" href="#" data-hover-url="https://us02web.zoom.us/j/84920491029?pwd=examplePassword">Join Zoom Meeting</a>`,
+        body: `<p>Alex Rivera is inviting you to a scheduled Zoom meeting.</p><br><p>Topic: Architecture Review<br>Time: 2:00 PM EST</p><a class="btn-action-link" href="https://us02web.zoom.us/j/84920491029?pwd=examplePassword">Join Zoom Meeting</a>`,
         isPhishing: false,
         explanation: "<strong>Legitimate:</strong> The domain <code>us02web.zoom.us</code> is an official Zoom meeting subdomain."
       },
@@ -472,7 +475,7 @@
         subject: "Please DocuSign: Employee Stock Option Grant",
         senderName: "DocuSign NA3 System",
         senderEmail: "dse_na3@docusign.net",
-        body: `<p>Your company administrator has sent you a document for signature.</p><a class="btn-action-link" href="#" data-hover-url="https://na3.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=12345">Review & Complete</a>`,
+        body: `<p>Your company administrator has sent you a document for signature.</p><a class="btn-action-link" href="https://na3.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=12345">Review & Complete</a>`,
         isPhishing: false,
         explanation: "<strong>Legitimate:</strong> DocuSign legitimate emails originate from regional domains like <code>docusign.net</code>."
       },
@@ -480,7 +483,7 @@
         subject: "Mail Delivery Failure: 4 Undelivered Messages",
         senderName: "Mail Delivery Subsystem",
         senderEmail: "mailer-daemon@exchange-relay-server.org",
-        body: `<p>The following messages could not be delivered to the recipient server due to an invalid TLS certificate handshake:</p><ul><li>Client_Proposal_Final.pdf</li></ul><p>Click below to release messages from quarantine:</p><a class="btn-action-link" href="#" data-hover-url="https://quarantine-release-gateway.com/auth">Release Quarantined Emails</a>`,
+        body: `<p>The following messages could not be delivered to the recipient server due to an invalid TLS certificate handshake:</p><ul><li>Client_Proposal_Final.pdf</li></ul><p>Click below to release messages from quarantine:</p><a class="btn-action-link" href="https://quarantine-release-gateway.com/auth">Release Quarantined Emails</a>`,
         isPhishing: true,
         explanation: "<strong>Fake Non-Delivery Report (NDR):</strong> Scammers spoof bounce-back and quarantine alerts to lure users into submitting credentials."
       }
@@ -506,7 +509,7 @@
 
     function renderQuestion() {
       const q = questions[currentIndex];
-      
+
       emailSubject.textContent = q.subject;
       emailSender.textContent = q.senderName;
       emailSenderAddr.textContent = q.senderEmail;
@@ -522,16 +525,37 @@
     }
 
     function attachHoverListeners() {
-      const hoverables = emailBody.querySelectorAll("[data-hover-url]");
-      hoverables.forEach(el => {
+      // Query both elements with data-hover-url and standard anchor tags inside the email body
+      const hoverables = emailBody.querySelectorAll("a, [data-hover-url]");
+
+      hoverables.forEach((el) => {
+        const hoverUrl = el.getAttribute("data-hover-url") || el.getAttribute("href");
+
+        // If an element uses data-hover-url, set the real href so the browser's 
+        // native bottom-left status bar displays the target destination on hover
+        if (el.tagName.toLowerCase() === "a" && hoverUrl) {
+          el.setAttribute("href", hoverUrl);
+        }
+
+        // Always prevent navigation if the user clicks any simulated link/attachment
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+
+        // Custom floating status bar updates
         el.addEventListener("mouseenter", () => {
-          statusBar.textContent = el.getAttribute("data-hover-url");
-          statusBar.style.display = "block";
+          if (hoverUrl && statusBar) {
+            statusBar.textContent = hoverUrl;
+            statusBar.style.display = "block";
+          }
         });
+
         el.addEventListener("mouseleave", () => {
-          statusBar.style.display = "none";
+          if (statusBar) {
+            statusBar.style.display = "none";
+          }
         });
-        el.addEventListener("click", (e) => e.preventDefault());
       });
     }
 
@@ -546,11 +570,11 @@
 
       feedbackBanner.className = `feedback-banner ${isCorrect ? 'correct' : 'incorrect'}`;
       feedbackBanner.innerHTML = isCorrect ? "✓ Correct!" : "✗ Not quite!";
-      
-      feedbackTitle.textContent = q.isPhishing 
-        ? "This email was a Phishing attempt." 
+
+      feedbackTitle.textContent = q.isPhishing
+        ? "This email was a Phishing attempt."
         : "This email was Legitimate.";
-        
+
       feedbackExplanation.innerHTML = q.explanation;
     }
 
@@ -570,7 +594,7 @@
       counter.textContent = "Finished";
 
       document.getElementById("final-score").textContent = `${score} / ${questions.length}`;
-      
+
       const verdict = document.getElementById("final-verdict");
       const percentage = (score / questions.length) * 100;
       if (percentage >= 90) {
@@ -593,4 +617,5 @@
     renderQuestion();
   </script>
 </body>
+
 </html>
