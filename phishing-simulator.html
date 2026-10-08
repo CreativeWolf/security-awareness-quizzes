@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishShield Quiz</title>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --danger: #d93025;
+      --success: #188038;
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --text: #202124;
+      --text-subtle: #5f6368;
+      --border: #dadce0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .quiz-container {
+      max-width: 800px;
+      width: 100%;
+      margin: 32px auto;
+      padding: 0 16px;
+      flex-grow: 1;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .progress-bar-container {
+      height: 4px;
+      background: var(--border);
+      width: 100%;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .email-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .email-subject {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .email-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.875rem;
+      color: var(--text-subtle);
+    }
+
+    .sender-highlight {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .email-body {
+      padding: 24px;
+      line-height: 1.6;
+      min-height: 220px;
+      color: #3c4043;
+    }
+
+    .email-body a {
+      color: var(--primary);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .btn-action-link {
+      display: inline-block;
+      margin: 16px 0;
+      padding: 10px 20px;
+      background: var(--primary);
+      color: #fff !important;
+      text-decoration: none !important;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .attachment-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-top: 16px;
+      cursor: pointer;
+      background: #fdfdfd;
+    }
+
+    .action-bar {
+      padding: 16px 24px;
+      background: #fafafa;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    button {
+      padding: 10px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-phishing {
+      background: #fff;
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .btn-phishing:hover {
+      background: #fce8e6;
+    }
+
+    .btn-legit {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-legit:hover {
+      background: var(--primary-hover);
+    }
+
+    .feedback-banner {
+      padding: 16px 24px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback-banner.correct {
+      background: #e6f4ea;
+      color: var(--success);
+    }
+
+    .feedback-banner.incorrect {
+      background: #fce8e6;
+      color: var(--danger);
+    }
+
+    .feedback-details {
+      padding: 20px 24px;
+      background: var(--surface);
+      line-height: 1.5;
+    }
+
+    .feedback-details h4 {
+      margin-bottom: 8px;
+    }
+
+    #status-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      background: #202124;
+      color: #fff;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      max-width: 80%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: none;
+      z-index: 100;
+      border-top-right-radius: 4px;
+    }
+
+    .results-screen {
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .score-circle {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin: 16px 0;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">PhishShield Quiz</div>
+    <div id="counter" style="color: var(--text-subtle); font-size: 0.9rem;">Question 1 of 24</div>
+  </header>
+
+  <div class="quiz-container">
+    <div class="card">
+      <div class="progress-bar-container">
+        <div id="progress" class="progress-bar"></div>
+      </div>
+
+      <div id="quiz-ui">
+        <div class="email-header">
+          <div id="email-subject" class="email-subject">Loading subject...</div>
+          <div class="email-meta">
+            <div><strong>From:</strong> <span id="email-sender" class="sender-highlight"></span> &lt;<span id="email-sender-addr"></span>&gt;</div>
+            <div><strong>To:</strong> you@company.com</div>
+          </div>
+        </div>
+
+        <div id="email-body" class="email-body"></div>
+
+        <div class="action-bar" id="decision-buttons">
+          <button class="btn-phishing" onclick="submitAnswer(true)">Phishing</button>
+          <button class="btn-legit" onclick="submitAnswer(false)">Legitimate</button>
+        </div>
+
+        <div id="feedback-panel" class="hidden">
+          <div id="feedback-banner" class="feedback-banner"></div>
+          <div class="feedback-details">
+            <h4 id="feedback-title"></h4>
+            <p id="feedback-explanation" style="color: var(--text-subtle);"></p>
+          </div>
+          <div class="action-bar">
+            <button class="btn-legit" onclick="nextQuestion()">Next Email &rarr;</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="results-ui" class="results-screen hidden">
+        <h2>Quiz Complete!</h2>
+        <div id="final-score" class="score-circle">0/0</div>
+        <p id="final-verdict" style="color: var(--text-subtle); margin-bottom: 24px;"></p>
+        <button class="btn-legit" onclick="restartQuiz()">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="status-bar"></div>
+
+  <script>
+    const questions = [
+      {
+        subject: "Action Required: Password Reset Request",
+        senderName: "IT Support Team",
+        senderEmail: "support@my-company-security.com",
+        body: `<p>Hello,</p><br><p>We received an urgent request to reset your system password. If you didn't initiate this request, click below to secure your credentials immediately:</p><a class="btn-action-link" href="#" data-hover-url="http://security-support-login.com.phish-site.ru/auth">Change Password</a><br><p>Thanks,<br>Corporate IT Support</p>`,
+        isPhishing: true,
+        explanation: "Check the sender domain and hover over the button. The email comes from a look-alike domain (<code>my-company-security.com</code>), and the button redirects to an external malicious server."
+      },
+      {
+        subject: "Shared Document: Q3 Financial Overview.pdf",
+        senderName: "Google Docs",
+        senderEmail: "comments-noreply@docs.google.com",
+        body: `<p><strong>Sarah Davis</strong> tagged you in a comment on <strong>Q3 Financial Overview.pdf</strong>:</p><br><blockquote style="border-left: 3px solid #dadce0; padding-left: 12px; margin-bottom: 12px; font-style: italic;">"Please review the updated revenue breakdown before tomorrow's meeting."</blockquote><a class="btn-action-link" href="#" data-hover-url="https://docs.google.com/document/d/1Xy8z.../edit">Open in Docs</a>`,
+        isPhishing: false,
+        explanation: "This is legitimate. The sender domain is verified as <code>docs.google.com</code>, and hovering over the call-to-action link reveals an authentic Google Drive URL."
+      },
+      {
+        subject: "Urgent: Unpaid Invoice #88392",
+        senderName: "Accounting Department",
+        senderEmail: "billing@acme-vendor.com",
+        body: `<p>Please find attached your updated invoice for this billing period. Prompt payment is appreciated.</p><div class="attachment-card" data-hover-url="http://mail-storage-attachment.com/invoice88392.pdf.exe"><span style="font-size: 1.5rem;">📄</span><div><strong>Invoice_88392.pdf.exe</strong><br><span style="font-size: 0.75rem; color: #5f6368;">240 KB</span></div></div>`,
+        isPhishing: true,
+        explanation: "Watch out for double extensions. The file masquerades as a PDF (<code>.pdf.exe</code>), but is an executable payload."
+      },
+      {
+        subject: "Dropbox: Storage Limit Reached",
+        senderName: "Dropbox Notifications",
+        senderEmail: "no-reply@dropboxmail.com",
+        body: `<p>Hi there,</p><br><p>Your team workspace has reached 98% capacity. To avoid interruption in syncing, review your account settings below.</p><p style="margin-top: 16px;"><a href="#" data-hover-url="https://www.dropbox.com/buy/storage">Upgrade Storage Plan</a></p>`,
+        isPhishing: false,
+        explanation: "Legitimate. <code>dropboxmail.com</code> is an official domain owned by Dropbox for automated notifications, and the link points to <code>dropbox.com</code>."
+      },
+      {
+        subject: "Security Alert: Unusual sign-in activity",
+        senderName: "Apple Support",
+        senderEmail: "security@apple-alerts.com",
+        body: `<p>Dear Customer,</p><br><p>Your Apple ID was used to sign in to iCloud from an unrecognized browser in Moscow, Russia.</p><p>If this was not you, please verify and protect your account immediately:</p><a class="btn-action-link" href="#" data-hover-url="https://www.xn--pple-43d.com/recovery">Secure My Account</a>`,
+        isPhishing: true,
+        explanation: "<strong>IDN Homograph Attack:</strong> The link uses Punycode (<code>xn--pple-43d.com</code>), which uses Cyrillic characters to imitate Latin letters."
+      },
+      {
+        subject: "Your GitHub authentication code",
+        senderName: "GitHub",
+        senderEmail: "noreply@github.com",
+        body: `<p>Hi there,</p><br><p>Here is your GitHub one-time verification code: <strong style="font-size: 1.2rem; letter-spacing: 2px;">849201</strong></p><p>This code expires in 10 minutes. If you did not request this, you can check your active sessions:</p><p><a href="#" data-hover-url="https://github.com/settings/sessions">View Active Sessions</a></p>`,
+        isPhishing: false,
+        explanation: "<strong>Legitimate:</strong> The sender domain is authentic (<code>github.com</code>), and the hyperlink points directly to the genuine GitHub settings page."
+      },
+      {
+        subject: "HR Dept: Please authorize Employee Pulse Survey App",
+        senderName: "Microsoft 365 HR Tool",
+        senderEmail: "notifications@microsoft.com",
+        body: `<p>Your organization has invited you to connect the <strong>Employee Pulse 2026</strong> app to your Office 365 account.</p><p>Permissions requested: <em>Read your emails, access contacts, send mail on your behalf.</em></p><a class="btn-action-link" href="#" data-hover-url="https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=bad-actor-app-id&response_type=code&scope=Mail.ReadWrite%20Mail.Send">Accept & Authorize</a>`,
+        isPhishing: true,
+        explanation: "<strong>OAuth Consent Phishing:</strong> While the link genuinely points to <code>login.microsoftonline.com</code>, an attacker is tricking you into granting an unverified third-party application access to your data."
+      },
+      {
+        subject: "Mandatory Q3 Compliance Training",
+        senderName: "Corporate HR Compliance",
+        senderEmail: "hr-compliance@connpany.com",
+        body: `<p>Team,</p><br><p>All employees are required to complete the Annual Compliance module before Friday to maintain active network access.</p><p><a href="#" data-hover-url="https://learning.connpany.com/login">Launch Compliance Portal</a></p>`,
+        isPhishing: true,
+        explanation: "<strong>Typosquatting:</strong> The domain is <code>connpany.com</code> (using two 'n's instead of 'm')."
+      },
+      {
+        subject: "You received a new document via DocuSign",
+        senderName: "DocuSign System",
+        senderEmail: "dse@docusign.net",
+        body: `<p>Please review and sign the attached <strong>NDA_Mutual_Agreement.pdf</strong>.</p><br><a class="btn-action-link" href="#" data-hover-url="https://www.google.com/url?q=http://malicious-phish-portal.com/login">Review Document</a>`,
+        isPhishing: true,
+        explanation: "<strong>Open Redirect Attack:</strong> The link abuses Google's redirector (<code>google.com/url?q=...</code>) to forward you to an external credential harvesting site."
+      },
+      {
+        subject: "Your W-2 Tax Form is ready for download",
+        senderName: "ADP Notifications",
+        senderEmail: "adp-ebill@adp.com",
+        body: `<p>Your end-of-year tax document is now available online.</p><br><p>Log in to your ADP portal to view or print your statement:</p><a class="btn-action-link" href="#" data-hover-url="https://online.adp.com/signin/v1/?APPID=W2">Access Tax Statement</a>`,
+        isPhishing: false,
+        explanation: "<strong>Legitimate:</strong> Third-party payroll alerts from ADP legitimately use <code>adp.com</code> subdomains, and the root domain is exact."
+      },
+      {
+        subject: "Action Required: Update Microsoft Authenticator 2FA",
+        senderName: "IT Helpdesk",
+        senderEmail: "servicedesk@internal-portal-cloud.com",
+        body: `<p>We are upgrading all staff to FIDO2 authentication standards. Please scan the QR code below with your mobile camera to re-register your authenticator app:</p><div style="border: 2px dashed #999; width: 140px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 16px 0; background: #eee;"><strong>[QR CODE]</strong></div><p><small>Link behind QR: https://auth-mfa-sync.cc/enroll</small></p>`,
+        isPhishing: true,
+        explanation: "<strong>Quishing (QR Code Phishing):</strong> Attackers use QR codes in emails so security scanners cannot easily inspect the URL and to force targets onto mobile devices."
+      },
+      {
+        subject: "Webinar Invitation: Enterprise Cloud Security Architecture",
+        senderName: "Cloudflare Events",
+        senderEmail: "events@cloudflare.com",
+        body: `<p>Join us live this Thursday for an interactive deep-dive on Zero Trust architecture.</p><a class="btn-action-link" href="#" data-hover-url="https://click.cloudflare.com/track/click?id=a1b2c3d4e5">Register for Webinar</a>`,
+        isPhishing: false,
+        explanation: "<strong>Legitimate Tracking Link:</strong> Companies frequently route legitimate email links through custom tracking subdomains (<code>click.cloudflare.com</code>)."
+      },
+      {
+        subject: "Amazon: Problem with your recent order payment",
+        senderName: "Amazon Billing",
+        senderEmail: "auto-confirm@amazon.com.customer-order-support.net",
+        body: `<p>We were unable to process the payment for order #112-9482910-48291.</p><p>Please update your billing details within 24 hours to prevent cancellation:</p><a class="btn-action-link" href="#" data-hover-url="https://amazon.com.customer-order-support.net/ap/signin">Update Payment Method</a>`,
+        isPhishing: true,
+        explanation: "<strong>Subdomain Misdirection:</strong> <code>amazon.com</code> is just a subdomain prefix of <code>customer-order-support.net</code>. The real domain is always before the final slash/TLD."
+      },
+      {
+        subject: "Your Slack sign-in magic link",
+        senderName: "Slack",
+        senderEmail: "feedback@slack.com",
+        body: `<p>Click the button below to sign in to your Slack workspace. This link will expire in 10 minutes and can only be used once.</p><a class="btn-action-link" href="#" data-hover-url="https://app.slack.com/magic-login/1298492-49281-auth">Sign In to Slack</a>`,
+        isPhishing: false,
+        explanation: "<strong>Legitimate:</strong> Standard passwordless magic link going directly to <code>app.slack.com</code>."
+      },
+      {
+        subject: "Encrypted Message: Wire Transfer Instructions",
+        senderName: "First National Bank",
+        senderEmail: "secure-messaging@fnb-bank.com",
+        body: `<p>You have received a secure encrypted message from First National Bank.</p><p>To decrypt and view this communication, download and open the attached offline reader:</p><div class="attachment-card" data-hover-url="javascript:void(0);"><span style="font-size: 1.5rem;">🌐</span><div><strong>SecureMessage_Viewer.html</strong><br><span style="font-size: 0.75rem; color: #5f6368;">18 KB</span></div></div>`,
+        isPhishing: true,
+        explanation: "<strong>HTML Attachment / Smuggling:</strong> Attaching <code>.html</code> or <code>.htm</code> files is a major red flag designed to run credential harvesting forms locally."
+      },
+      {
+        subject: "Microsoft 365: Session Expired",
+        senderName: "Microsoft Account Team",
+        senderEmail: "no-reply@accountprotection.microsoft.com",
+        body: `<p>Your session timed out. Re-authenticate below to resume working with your team files:</p><a class="btn-action-link" href="#" data-hover-url="https://login.microsoftonline.com.auth-session-sync.biz/login">Keep Me Signed In</a>`,
+        isPhishing: true,
+        explanation: "<strong>Adversary-in-the-Middle (AitM):</strong> Attackers use reverse proxies to bypass MFA. Notice the deceptive domain <code>auth-session-sync.biz</code>."
+      },
+      {
+        subject: "Weekly Jira Digest: Assigned Tickets",
+        senderName: "Jira Internal",
+        senderEmail: "jira@corp.internal-tools.net",
+        body: `<p>Here are your open sprint items for this week:</p><ul><li>PROJ-412: Database migration scripts</li><li>PROJ-501: Refactor auth routes</li></ul><p><a href="#" data-hover-url="https://jira.corp.internal-tools.net/browse/PROJ-412">Open Ticket in Jira</a></p>`,
+        isPhishing: false,
+        explanation: "<strong>Legitimate Internal Notification:</strong> Points straight to a recognized enterprise subdomain without external hops."
+      },
+      {
+        subject: "IT Service Desk: Terminated Employee Account Offboarding",
+        senderName: "Helpdesk Administration",
+        senderEmail: "helpdesk@company-internal.net",
+        body: `<p>All managers must submit the termination equipment audit using the official form:</p><a class="btn-action-link" href="#" data-hover-url="https://forms.gle/49Vb8Z9pKL2">Complete Offboarding Audit</a>`,
+        isPhishing: true,
+        explanation: "<strong>Free Cloud Service Abuse:</strong> Phishers frequently host credential collection forms on legitimate free platforms like Google Forms to bypass reputation filters."
+      },
+      {
+        subject: "Quick request - Are you at your desk?",
+        senderName: "Robert Vance (CEO)",
+        senderEmail: "ceo.personal.office74@gmail.com",
+        body: `<p>Are you available right now? I'm in a board meeting and need you to handle an urgent wire payment to an external vendor before 3 PM.</p><p>Send me your cell phone number so I can text you the wire coordinates.</p>`,
+        isPhishing: true,
+        explanation: "<strong>Business Email Compromise (BEC):</strong> The sender uses a personal Gmail address while posing as an executive requesting urgent money movement."
+      },
+      {
+        subject: "Meeting Invitation: Engineering Sync",
+        senderName: "Alex Rivera",
+        senderEmail: "no-reply@zoom.us",
+        body: `<p>Alex Rivera is inviting you to a scheduled Zoom meeting.</p><br><p>Topic: Architecture Review<br>Time: 2:00 PM EST</p><a class="btn-action-link" href="#" data-hover-url="https://us02web.zoom.us/j/84920491029?pwd=examplePassword">Join Zoom Meeting</a>`,
+        isPhishing: false,
+        explanation: "<strong>Legitimate:</strong> The domain <code>us02web.zoom.us</code> is an official Zoom meeting subdomain."
+      },
+      {
+        subject: "Invoice #INV-2026-9481 Paid Successfully ($899.00)",
+        senderName: "Geek Squad Renewal",
+        senderEmail: "subscriptions-receipts@billing-orders.com",
+        body: `<p>Thank you for your renewal payment of <strong>$899.00</strong> for Geek Squad 3-Year Protection.</p><p>If you did not authorize this charge or wish to cancel and request a full refund, call our 24/7 support line:</p><p style="font-size: 1.2rem; font-weight: bold; color: #d93025; margin: 12px 0;">+1 (800) 555-0199</p>`,
+        isPhishing: true,
+        explanation: "<strong>Callback Phishing (TOAD):</strong> Contains no malicious links, but uses a fake charge to bait the victim into calling a fraudulent call center."
+      },
+      {
+        subject: "Updated Contract Guidelines and Addendum",
+        senderName: "Legal Counsel",
+        senderEmail: "legal@external-firm-counsel.com",
+        body: `<p>Please review the archive container containing the signed contracts:</p><div class="attachment-card" data-hover-url="http://external-firm-counsel.com/files/Contract_Addendum.iso"><span style="font-size: 1.5rem;">📦</span><div><strong>Contract_Addendum.iso</strong><br><span style="font-size: 0.75rem; color: #5f6368;">1.4 MB</span></div></div>`,
+        isPhishing: true,
+        explanation: "<strong>Malicious Container Attachment:</strong> ISO and IMG files are commonly used by attackers to encapsulate malicious executables."
+      },
+      {
+        subject: "Please DocuSign: Employee Stock Option Grant",
+        senderName: "DocuSign NA3 System",
+        senderEmail: "dse_na3@docusign.net",
+        body: `<p>Your company administrator has sent you a document for signature.</p><a class="btn-action-link" href="#" data-hover-url="https://na3.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=12345">Review & Complete</a>`,
+        isPhishing: false,
+        explanation: "<strong>Legitimate:</strong> DocuSign legitimate emails originate from regional domains like <code>docusign.net</code>."
+      },
+      {
+        subject: "Mail Delivery Failure: 4 Undelivered Messages",
+        senderName: "Mail Delivery Subsystem",
+        senderEmail: "mailer-daemon@exchange-relay-server.org",
+        body: `<p>The following messages could not be delivered to the recipient server due to an invalid TLS certificate handshake:</p><ul><li>Client_Proposal_Final.pdf</li></ul><p>Click below to release messages from quarantine:</p><a class="btn-action-link" href="#" data-hover-url="https://quarantine-release-gateway.com/auth">Release Quarantined Emails</a>`,
+        isPhishing: true,
+        explanation: "<strong>Fake Non-Delivery Report (NDR):</strong> Scammers spoof bounce-back and quarantine alerts to lure users into submitting credentials."
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+
+    const emailSubject = document.getElementById("email-subject");
+    const emailSender = document.getElementById("email-sender");
+    const emailSenderAddr = document.getElementById("email-sender-addr");
+    const emailBody = document.getElementById("email-body");
+    const decisionButtons = document.getElementById("decision-buttons");
+    const feedbackPanel = document.getElementById("feedback-panel");
+    const feedbackBanner = document.getElementById("feedback-banner");
+    const feedbackTitle = document.getElementById("feedback-title");
+    const feedbackExplanation = document.getElementById("feedback-explanation");
+    const counter = document.getElementById("counter");
+    const progressBar = document.getElementById("progress");
+    const statusBar = document.getElementById("status-bar");
+    const quizUI = document.getElementById("quiz-ui");
+    const resultsUI = document.getElementById("results-ui");
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      
+      emailSubject.textContent = q.subject;
+      emailSender.textContent = q.senderName;
+      emailSenderAddr.textContent = q.senderEmail;
+      emailBody.innerHTML = q.body;
+
+      decisionButtons.classList.remove("hidden");
+      feedbackPanel.classList.add("hidden");
+
+      counter.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+      progressBar.style.width = `${((currentIndex) / questions.length) * 100}%`;
+
+      attachHoverListeners();
+    }
+
+    function attachHoverListeners() {
+      const hoverables = emailBody.querySelectorAll("[data-hover-url]");
+      hoverables.forEach(el => {
+        el.addEventListener("mouseenter", () => {
+          statusBar.textContent = el.getAttribute("data-hover-url");
+          statusBar.style.display = "block";
+        });
+        el.addEventListener("mouseleave", () => {
+          statusBar.style.display = "none";
+        });
+        el.addEventListener("click", (e) => e.preventDefault());
+      });
+    }
+
+    function submitAnswer(userSaysPhishing) {
+      const q = questions[currentIndex];
+      const isCorrect = userSaysPhishing === q.isPhishing;
+
+      if (isCorrect) score++;
+
+      decisionButtons.classList.add("hidden");
+      feedbackPanel.classList.remove("hidden");
+
+      feedbackBanner.className = `feedback-banner ${isCorrect ? 'correct' : 'incorrect'}`;
+      feedbackBanner.innerHTML = isCorrect ? "✓ Correct!" : "✗ Not quite!";
+      
+      feedbackTitle.textContent = q.isPhishing 
+        ? "This email was a Phishing attempt." 
+        : "This email was Legitimate.";
+        
+      feedbackExplanation.innerHTML = q.explanation;
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      quizUI.classList.add("hidden");
+      resultsUI.classList.remove("hidden");
+      progressBar.style.width = `100%`;
+      counter.textContent = "Finished";
+
+      document.getElementById("final-score").textContent = `${score} / ${questions.length}`;
+      
+      const verdict = document.getElementById("final-verdict");
+      const percentage = (score / questions.length) * 100;
+      if (percentage >= 90) {
+        verdict.textContent = "Outstanding! You have a sharp eye for modern phishing techniques.";
+      } else if (percentage >= 60) {
+        verdict.textContent = "Good effort! Remember to always inspect domains and link destinations carefully.";
+      } else {
+        verdict.textContent = "Phishing attempts can be subtle. Review the clues above and try again!";
+      }
+    }
+
+    function restartQuiz() {
+      currentIndex = 0;
+      score = 0;
+      resultsUI.classList.add("hidden");
+      quizUI.classList.remove("hidden");
+      renderQuestion();
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>

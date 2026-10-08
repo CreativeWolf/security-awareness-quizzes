@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise Security Awareness Simulator</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --panel-bg: #1e293b;
+      --surface: #ffffff;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --success: #16a34a;
+      --success-hover: #15803d;
+      --border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #111827;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      background: #374151;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #93c5fd;
+    }
+
+    .main-layout {
+      max-width: 900px;
+      width: 100%;
+      margin: 28px auto;
+      padding: 0 16px;
+      flex-grow: 1;
+    }
+
+    .scenario-container {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .context-toolbar {
+      background: #0b1329;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .context-tag {
+      background: #1e293b;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #38bdf8;
+    }
+
+    .mockup-body {
+      padding: 32px 24px;
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .scenario-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 24px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .scenario-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scenario-desc {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #334155;
+      margin-bottom: 16px;
+    }
+
+    .interactive-snippet {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 14px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #1e293b;
+      margin-bottom: 16px;
+    }
+
+    .decision-footer {
+      padding: 20px 24px;
+      background: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    button {
+      padding: 10px 22px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-hazard {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn-hazard:hover { background: var(--danger-hover); }
+
+    .btn-compliant {
+      background: var(--success);
+      color: #fff;
+    }
+    .btn-compliant:hover { background: var(--success-hover); }
+
+    .btn-next {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-next:hover { background: var(--accent-hover); }
+
+    .analysis-panel {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      background: #0b1329;
+    }
+
+    .analysis-status {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .text-danger { color: #f87171; }
+    .text-success { color: #4ade80; }
+
+    .analysis-text {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1 style="font-size: 1.25rem; font-weight: 700;">Operational Security Awareness Simulator</h1>
+      <!-- <p style="font-size: 0.8rem; color: var(--text-muted);">Real-World Physical, Operational & Data Hygiene Scenarios</p> -->
+    </div>
+    <div id="step-counter" class="badge">Scenario 1 of 20</div>
+  </header>
+
+  <div class="main-layout">
+    <div class="scenario-container">
+      
+      <div id="scenario-viewport">
+        <div class="context-toolbar">
+          <span>Vector Context:</span>
+          <span class="context-tag" id="context-tag">Physical Security</span>
+        </div>
+
+        <div class="mockup-body" id="mockup-content"></div>
+      </div>
+
+      <div class="decision-footer" id="decision-controls">
+        <span style="font-size: 0.88rem; color: var(--text-muted);">Is this practice a security violation or compliant?</span>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn-hazard" onclick="evaluateChoice(true)">Security Hazard / Policy Violation</button>
+          <button class="btn-compliant" onclick="evaluateChoice(false)">Secure / Compliant Action</button>
+        </div>
+      </div>
+
+      <div class="analysis-panel hidden" id="analysis-panel">
+        <div id="analysis-header" class="analysis-status"></div>
+        <p id="analysis-body" class="analysis-text"></p>
+        <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
+          <button class="btn-next" onclick="loadNextScenario()">Next Scenario &rarr;</button>
+        </div>
+      </div>
+
+      <div class="mockup-body hidden" id="final-stats" style="color: var(--text-main); background: var(--panel-bg); text-align: center; padding: 48px 24px;">
+        <h2 style="font-size: 2rem; margin-bottom: 12px;">Assessment Finished</h2>
+        <p id="score-text" style="font-size: 1.15rem; color: var(--text-muted); margin-bottom: 24px;"></p>
+        <button class="btn-next" onclick="resetQuiz()">Restart 20-Scenario Assessment</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const scenarios = [
+      // 1. Removable Media (USB)
+      {
+        tactic: "Removable Media / BadUSB",
+        context: "Physical Hardware",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>💾</span> Found USB Drive in Parking Lot</div>
+            <p class="scenario-desc">You discover a branded 128GB flash drive labeled <em>"Q4 Executive Bonus Payouts"</em> near your office entrance. To find out who lost it, you plug it into your corporate laptop to inspect its file directory.</p>
+            <div class="interactive-snippet">
+              <strong>Action Taken:</strong> Connected to corporate laptop USB port &rarr; Opened Windows File Explorer &rarr; Browsing files to find the owner.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Critical Hazard:</strong> Never connect unknown flash drives to corporate systems. Attackers use physical drop attacks with BadUSB devices (like Rubber Ducky) that register as keyboards to inject malicious keystrokes within seconds."
+      },
+      {
+        tactic: "Removable Media / BadUSB",
+        context: "Physical Hardware",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🛡️</span> Hardware Surrender to SOC</div>
+            <p class="scenario-desc">A guest speaker leaves an unbranded thumb drive on a conference room podium. You leave the device disconnected, place it in an envelope, and hand it over to the corporate IT/Security desk for quarantined analysis.</p>
+            <div class="interactive-snippet">
+              <strong>Action Taken:</strong> Device left unplugged &rarr; Handed directly to IT Security Helpdesk for forensic handling.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Compliant Protocol:</strong> Unknown removable devices must be submitted directly to security teams to be evaluated in isolated, air-gapped sandboxes."
+      },
+
+      // 2. Visual Eavesdropping / Shoulder Surfing
+      {
+        tactic: "Shoulder Surfing",
+        context: "Remote Work & Travel",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>✈️</span> Working on Airplane Without Privacy Filter</div>
+            <p class="scenario-desc">While seated in the middle seat on a packed commercial flight, you open an unencrypted Excel spreadsheet containing customer PII and internal enterprise financial figures without a polarized privacy filter on your screen.</p>
+            <div class="interactive-snippet">
+              <strong>Environment:</strong> Passenger to your left and right have clear lines of sight directly onto your display.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Security Hazard:</strong> Displaying confidential, proprietary, or regulated personal data in dense public areas without a polarized privacy screen violates corporate data protection and NDA standards."
+      },
+      {
+        tactic: "Shoulder Surfing",
+        context: "Remote Work & Travel",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🖥️</span> Privacy Filter & Workstation Auto-Lock</div>
+            <p class="scenario-desc">You configure your workstation with an optical polarized privacy filter, set the screen auto-lock timeout to 60 seconds of inactivity, and position your screen away from coffee shop walkways while working remotely.</p>
+            <div class="interactive-snippet">
+              <strong>Environment:</strong> Angle of visibility restricted to &plusmn;30 degrees; workstation locks automatically if you step away.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Compliant Practice:</strong> Combining short inactivity lock timers with narrow-angle optical filters significantly reduces visual eavesdropping risks in transit."
+      },
+
+      // 3. Tailgating / Piggybacking
+      {
+        tactic: "Physical Access Control",
+        context: "Facility Security",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🚪</span> Holding Secure Door for Delivery Driver</div>
+            <p class="scenario-desc">You scan your RFID badge at the secure badge-access turnstile leading into the main office floor. A delivery person holding catering boxes asks you to hold the door, and you let them walk through behind you without badging in.</p>
+            <div class="interactive-snippet">
+              <strong>Event:</strong> Two individuals enter a restricted perimeter using a single credential swipe.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Physical Breach (Tailgating):</strong> Social engineering frequently exploits politeness. Delivery personnel and visitors must be directed to front reception or designated security check-ins rather than granted unbadged floor access."
+      },
+      {
+        tactic: "Physical Access Control",
+        context: "Facility Security",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🛑</span> Enforcing Reception Check-In</div>
+            <p class="scenario-desc">An individual claiming to be an HVAC technician tries to follow you through a badge-only side entrance. You politely decline to let them piggyback and direct them around to the main visitor reception desk.</p>
+            <div class="interactive-snippet">
+              <strong>Action Taken:</strong> Access denied at side door &rarr; Visitor redirected to visitor sign-in and escort protocol.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Compliant Security:</strong> Strictly adhering to 'one badge, one entry' prevents unauthorized physical traversal of corporate facilities."
+      },
+
+      // 4. Public Wi-Fi & Network Hygiene
+      {
+        tactic: "Public Network Hygiene",
+        context: "Network Security",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>📶</span> Working Directly on Open Airport Wi-Fi</div>
+            <p class="scenario-desc">You connect your corporate laptop to an open, unencrypted network named <em>"Free_Airport_HighSpeed_WiFi"</em> and disable your enterprise ZTNA / VPN client to bypass bandwidth throttle caps.</p>
+            <div class="interactive-snippet">
+              <strong>Network Profile:</strong> Open hotspot with no WPA encryption; corporate tunneling software intentionally disabled.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Major Network Hazard:</strong> Disabling VPN/ZTNA tunnels on public Wi-Fi exposes network metadata, allows DNS interception, and enables adversary-in-the-middle evil twin attacks."
+      },
+      {
+        tactic: "Public Network Hygiene",
+        context: "Network Security",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🔒</span> Cellular Hotspot with Enforced Tunneling</div>
+            <p class="scenario-desc">While working at a train station, you avoid public unencrypted access points and tether through your corporate-managed smartphone's encrypted mobile hotspot with an active ZTNA tunnel.</p>
+            <div class="interactive-snippet">
+              <strong>Network Profile:</strong> Authenticated WPA3 cellular connection running an encrypted corporate tunnel.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Secure Practice:</strong> Dedicated mobile tethering paired with encrypted tunneling isolates enterprise traffic from untrusted local networks."
+      },
+
+      // 5. Cloud Data Hygiene & Shadow IT
+      {
+        tactic: "Shadow IT / Cloud Storage",
+        context: "Data Governance",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>☁️</span> Uploading Work Documents to Free Personal Cloud</div>
+            <p class="scenario-desc">To finish a presentation over the weekend on your home computer, you upload an unencrypted client database and contract draft to your personal consumer Dropbox account.</p>
+            <div class="interactive-snippet">
+              <strong>Data Transfer:</strong> Corporate internal records exfiltrated to an unmanaged personal consumer cloud service.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Policy Violation (Shadow IT & Data Sprawl):</strong> Moving enterprise data to personal cloud storage bypasses Data Loss Prevention (DLP), access audit logging, and regulatory compliance standards like GDPR and HIPAA."
+      },
+      {
+        tactic: "Shadow IT / Cloud Storage",
+        context: "Data Governance",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>📁</span> Enterprise Managed Repository Storage</div>
+            <p class="scenario-desc">You save project work in the company-managed SharePoint library with Information Rights Management (IRM) applied, ensuring only authenticated team members can open the files.</p>
+            <div class="interactive-snippet">
+              <strong>Storage:</strong> Enterprise tenant cloud with active audit trails and endpoint encryption policies.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Compliant Protocol:</strong> Utilizing approved corporate cloud storage ensures documents inherit retention policies, DLP controls, and centralized revoke capabilities."
+      },
+
+      // 6. Voice Phishing (Vishing) & Deepfakes
+      {
+        tactic: "Voice Phishing (Vishing)",
+        context: "Social Engineering",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>📞</span> Urgent Executive Wire Transfer Request</div>
+            <p class="scenario-desc">You receive an urgent phone call from someone whose voice sounds identical to your VP of Finance, demanding you immediately authorize an emergency vendor wire payment to a new overseas account.</p>
+            <div class="interactive-snippet">
+              <strong>Caller Action:</strong> Demands an out-of-band wire bypass citing confidentiality; voice generated via AI cloning tools.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Vishing / Deepfake Audio Hazard:</strong> Never process payments or share secrets solely based on an inbound phone call, even if the caller sounds like a familiar executive. AI voice cloning makes auditory verification alone unreliable."
+      },
+      {
+        tactic: "Voice Phishing (Vishing)",
+        context: "Social Engineering",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🔄</span> Out-of-Band Secondary Verification</div>
+            <p class="scenario-desc">An unknown vendor calls demanding an immediate update to their payment direct deposit banking details. You pause the request and verify it by calling the verified primary number on file in the ERP system.</p>
+            <div class="interactive-snippet">
+              <strong>Verification:</strong> Refused inbound phone instructions; initiated outbound call to verified vendor records.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Secure Verification:</strong> Dual-control and independent out-of-band verification is the primary defense against payment diversion fraud."
+      },
+
+      // 7. Source Code & Secrets Management
+      {
+        tactic: "Secrets Management",
+        context: "DevOps & Engineering",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>💻</span> Hardcoding API Keys in Public Git Commits</div>
+            <p class="scenario-desc">To quickly test a cloud deployment, a developer leaves production AWS credentials and private database strings directly in a codebase committed to a GitHub repository.</p>
+            <div class="interactive-snippet">
+              <pre style="font-family:monospace; background:#0f172a; color:#f8fafc; padding:8px; border-radius:4px; font-size:0.75rem;">
+const AWS_KEY = "AKIAIOSFODNN7EXAMPLE";
+const DB_PASS = "SuperSecretProdPassword123!";</pre>
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Critical Hazard:</strong> Secrets should never be hardcoded into source code. Automated scanners scan public repositories continuously, extracting exposed credentials within seconds of a commit."
+      },
+      {
+        tactic: "Secrets Management",
+        context: "DevOps & Engineering",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🔑</span> Environment Variables & Secret Vaults</div>
+            <p class="scenario-desc">You store all sensitive database strings, private tokens, and TLS keys in a centralized Secrets Manager, referencing them in your codebase strictly via environment variables.</p>
+            <div class="interactive-snippet">
+              <pre style="font-family:monospace; background:#0f172a; color:#f8fafc; padding:8px; border-radius:4px; font-size:0.75rem;">
+const dbPassword = process.env.DATABASE_PASSWORD;</pre>
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Secure Architecture:</strong> Externalizing secrets via encrypted key vaults or environment variables prevents credentials from persisting in version control history."
+      },
+
+      // 8. Physical Document Disposal
+      {
+        tactic: "Physical Document Handling",
+        context: "Information Security",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🗑️</span> Tossing Paper Resumes into Standard Recycling</div>
+            <p class="scenario-desc">After interviewing 10 job candidates, you throw printed copies of their resumes (including full names, home addresses, phone numbers, and work history) into the open trash can under your desk.</p>
+            <div class="interactive-snippet">
+              <strong>Disposal Method:</strong> Thrown into generic office waste bin accessible by night cleaning staff and external trash handlers.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Dumpster Diving Risk:</strong> Discarding sensitive employee or candidate PII in regular trash violates privacy laws. Physical records must be deposited in locked, cross-cut shredding consoles."
+      },
+      {
+        tactic: "Physical Document Handling",
+        context: "Information Security",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🔒</span> Locked Secure Shredding Console</div>
+            <p class="scenario-desc">After reviewing printed network topology diagrams and customer contract drafts, you deposit all physical papers directly into the locked on-floor shredding bin for cross-cut destruction.</p>
+            <div class="interactive-snippet">
+              <strong>Disposal Method:</strong> Locked bin with certified chain-of-custody destruction.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Compliant Disposal:</strong> Certified document destruction prevents physical exfiltration and inadvertent exposure of corporate schematics."
+      },
+
+      // 9. Rogue USB Charging (Juice Jacking)
+      {
+        tactic: "Juice Jacking / Hardware Attacks",
+        context: "Mobile Device Security",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🔋</span> Using Free Public USB Charging Kiosks Directly</div>
+            <p class="scenario-desc">Your corporate smartphone is at 3% battery in a shopping mall. You plug your phone directly into an untrusted, wall-mounted public USB-A charging port using a standard data-sync cable.</p>
+            <div class="interactive-snippet">
+              <strong>Connection:</strong> Standard USB data+power lines connected to unverified public hardware.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Juice Jacking Risk:</strong> Public USB ports can be modified to establish data connections, install malware, or dump device memory. Always use an AC power outlet adapter or a dedicated USB data-blocker."
+      },
+      {
+        tactic: "Juice Jacking / Hardware Attacks",
+        context: "Mobile Device Security",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🔌</span> Dedicated AC Wall Adapter or USB Data Blocker</div>
+            <p class="scenario-desc">While at the airport, you recharge your smartphone using your own OEM AC wall adapter plugged into a standard electrical outlet, avoiding public USB hubs entirely.</p>
+            <div class="interactive-snippet">
+              <strong>Connection:</strong> AC power outlet only; no data pins exposed to external hardware.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Secure Practice:</strong> AC wall charging delivers power directly without exposing the smartphone's USB data pins to potential inspection."
+      },
+
+      // 10. Screen Sharing Oversharing
+      {
+        tactic: "Collaboration & Video Meetings",
+        context: "Operational Privacy",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>📺</span> Sharing Entire Desktop During Client Presentation</div>
+            <p class="scenario-desc">During a Zoom call with external vendors, you share your <em>Entire Screen</em> instead of a single window. A private Slack message showing proprietary client compensation figures pops up in the corner.</p>
+            <div class="interactive-snippet">
+              <strong>Broadcast:</strong> Full 4K desktop display including background Slack notifications and browser tabs.
+            </div>
+          </div>
+        `,
+        isViolation: true,
+        explanation: "<strong>Information Leakage:</strong> Sharing an entire screen often leaks confidential desktop pop-ups, chat messages, and browser bookmark bars. Always share only the specific application window."
+      },
+      {
+        tactic: "Collaboration & Video Meetings",
+        context: "Operational Privacy",
+        html: `
+          <div class="scenario-card">
+            <div class="scenario-title"><span>🎯</span> Application-Only Window Sharing</div>
+            <p class="scenario-desc">Before presenting to an external customer, you enable 'Do Not Disturb' mode to suppress notifications and share only the specific presentation slide application window.</p>
+            <div class="interactive-snippet">
+              <strong>Broadcast:</strong> Limited to slide deck application; notifications suppressed; desktop isolated.
+            </div>
+          </div>
+        `,
+        isViolation: false,
+        explanation: "<strong>Best Practice:</strong> Sharing isolated application windows and silencing notifications prevents background leaks of confidential enterprise discussions."
+      }
+    ];
+
+    let currentStep = 0;
+    let score = 0;
+    let activeScenarios = [];
+
+    const contextTag = document.getElementById("context-tag");
+    const mockupContent = document.getElementById("mockup-content");
+    const stepCounter = document.getElementById("step-counter");
+    const decisionControls = document.getElementById("decision-controls");
+    const analysisPanel = document.getElementById("analysis-panel");
+    const analysisHeader = document.getElementById("analysis-header");
+    const analysisBody = document.getElementById("analysis-body");
+    const scenarioViewport = document.getElementById("scenario-viewport");
+    const finalStats = document.getElementById("final-stats");
+    const scoreText = document.getElementById("score-text");
+
+    // Shuffle guaranteeing no consecutive tactic repetitions
+    function generateNonConsecutivePlaylist(items) {
+      let pool = [...items];
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+
+      const result = [];
+      while (pool.length > 0) {
+        const lastTactic = result.length > 0 ? result[result.length - 1].tactic : null;
+        const candidateIdx = pool.findIndex(item => item.tactic !== lastTactic);
+
+        if (candidateIdx !== -1) {
+          result.push(pool.splice(candidateIdx, 1)[0]);
+        } else {
+          const orphan = pool.pop();
+          let swapped = false;
+          for (let i = result.length - 2; i >= 0; i--) {
+            const prev = result[i];
+            const next = result[i + 1];
+            if (prev.tactic !== orphan.tactic && (!next || next.tactic !== orphan.tactic)) {
+              result.splice(i + 1, 0, orphan);
+              swapped = true;
+              break;
+            }
+          }
+          if (!swapped) {
+            result.unshift(orphan);
+          }
+        }
+      }
+      return result;
+    }
+
+    function loadScenario(index) {
+      const data = activeScenarios[index];
+      contextTag.textContent = data.context;
+      mockupContent.innerHTML = data.html;
+      stepCounter.textContent = `Scenario ${index + 1} of ${activeScenarios.length}`;
+      
+      decisionControls.classList.remove("hidden");
+      analysisPanel.classList.add("hidden");
+    }
+
+    function evaluateChoice(userChoseViolation) {
+      const data = activeScenarios[currentStep];
+      const isCorrect = userChoseViolation === data.isViolation;
+
+      if (isCorrect) score++;
+
+      decisionControls.classList.add("hidden");
+      analysisPanel.classList.remove("hidden");
+
+      if (isCorrect) {
+        analysisHeader.className = "analysis-status text-success";
+        analysisHeader.innerHTML = `✓ Correct Assessment (${data.tactic})`;
+      } else {
+        analysisHeader.className = "analysis-status text-danger";
+        analysisHeader.innerHTML = `✗ Vulnerability Misidentified (${data.tactic})`;
+      }
+
+      analysisBody.innerHTML = data.explanation;
+    }
+
+    function loadNextScenario() {
+      currentStep++;
+      if (currentStep < activeScenarios.length) {
+        loadScenario(currentStep);
+      } else {
+        displayResults();
+      }
+    }
+
+    function displayResults() {
+      scenarioViewport.classList.add("hidden");
+      analysisPanel.classList.add("hidden");
+      decisionControls.classList.add("hidden");
+      finalStats.classList.remove("hidden");
+      stepCounter.textContent = "Finished";
+
+      const percentage = Math.round((score / activeScenarios.length) * 100);
+      let verdict = "";
+
+      if (percentage >= 90) {
+        verdict = "Outstanding! You demonstrate exceptional operational security hygiene across physical, cloud, and collaborative environments.";
+      } else if (percentage >= 70) {
+        verdict = "Solid awareness. Review physical security controls and out-of-band verification steps.";
+      } else {
+        verdict = "High organizational risk. Pay close attention to physical access, data disposal, and mobile security.";
+      }
+
+      scoreText.innerHTML = `You correctly evaluated <strong>${score} out of ${activeScenarios.length}</strong> scenarios (${percentage}%).<br><br>${verdict}`;
+    }
+
+    function resetQuiz() {
+      currentStep = 0;
+      score = 0;
+      activeScenarios = generateNonConsecutivePlaylist(scenarios);
+      finalStats.classList.add("hidden");
+      scenarioViewport.classList.remove("hidden");
+      loadScenario(0);
+    }
+
+    // Initialize randomized assessment
+    resetQuiz();
+  </script>
+</body>
+</html>
