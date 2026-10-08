@@ -291,7 +291,7 @@
     </div>
   </div>
 
-  <div id="status-bar"></div>
+  <!-- <div id="status-bar"></div> -->
 
   <script>
     const questions = [
@@ -525,36 +525,20 @@
     }
 
     function attachHoverListeners() {
-      // Query both elements with data-hover-url and standard anchor tags inside the email body
       const hoverables = emailBody.querySelectorAll("a, [data-hover-url]");
 
       hoverables.forEach((el) => {
         const hoverUrl = el.getAttribute("data-hover-url") || el.getAttribute("href");
 
-        // If an element uses data-hover-url, set the real href so the browser's 
-        // native bottom-left status bar displays the target destination on hover
+        // Let the native browser status bar display the real destination
         if (el.tagName.toLowerCase() === "a" && hoverUrl) {
           el.setAttribute("href", hoverUrl);
         }
 
-        // Always prevent navigation if the user clicks any simulated link/attachment
+        // Prevent navigation on click
         el.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
-        });
-
-        // Custom floating status bar updates
-        el.addEventListener("mouseenter", () => {
-          if (hoverUrl && statusBar) {
-            statusBar.textContent = hoverUrl;
-            statusBar.style.display = "block";
-          }
-        });
-
-        el.addEventListener("mouseleave", () => {
-          if (statusBar) {
-            statusBar.style.display = "none";
-          }
         });
       });
     }
